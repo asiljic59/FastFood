@@ -34,3 +34,38 @@ set_target_properties(glfw3 PROPERTIES
 )
 
 target_link_libraries(FastFood_SV_50_2022 glfw3 opengl32)
+
+
+file(COPY
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/start_button.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/table.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/plate.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/smederevac.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/patty.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/bottom_bun.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/top_bun.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/name.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/lettuce.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/onion.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/pickles.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/ketchup.png
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/mustard.png 
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/ketchup_splash.png 
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/mustard_splash.png 
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/ketchup_layer.png 
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/mustard_layer.png 	
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/cheese.png 
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/greetings.png  
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/tomato.png 	
+    DESTINATION ${CMAKE_BINARY_DIR}
+)
+
+file(COPY
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/default.vert
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/default.frag
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/patty.vert
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/patty.frag
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/color.vert
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/color.frag
+    DESTINATION ${CMAKE_BINARY_DIR}
+)

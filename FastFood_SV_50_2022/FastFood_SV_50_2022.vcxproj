@@ -187,6 +187,7 @@
     <Image Include="plate.png" />
     <Image Include="progress_bar.png" />
     <Image Include="table.png" />
+    <Image Include="tomato.png" />
     <Image Include="top_bun.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
