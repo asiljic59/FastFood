@@ -111,13 +111,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="D:\Downloads\patty.png">
+    <Image Include="patty.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="D:\Downloads\smederevac.png">
+    <Image Include="smederevac.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="D:\Downloads\start_button.png">
+    <Image Include="start_button.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="name.png">
