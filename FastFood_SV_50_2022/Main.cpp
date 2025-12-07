@@ -77,6 +77,35 @@ bool PattyOverStove()
 
 	return overlapX && overlapY;
 }
+//loadovanje curosra
+GLFWcursor* loadImageToCursor(const char* filePath) {
+	int TextureWidth;
+	int TextureHeight;
+	int TextureChannels;
+
+	unsigned char* ImageData = stbi_load(filePath, &TextureWidth, &TextureHeight, &TextureChannels, 0);
+
+	if (ImageData != NULL)
+	{
+		GLFWimage image;
+		image.width = TextureWidth;
+		image.height = TextureHeight;
+		image.pixels = ImageData;
+
+		// Tacka na površini slike kursora koja se ponaša kao hitboks
+		int hotspotX = TextureWidth / 5;
+		int hotspotY = TextureHeight / 6;
+
+		GLFWcursor* cursor = glfwCreateCursor(&image, hotspotX, hotspotY);
+		stbi_image_free(ImageData);
+		return cursor;
+	}
+	else {
+		std::cout << "Kursor nije ucitan! Putanja kursora: " << filePath << std::endl;
+		stbi_image_free(ImageData);
+
+	}
+}
 
 
 //funkcija za dobvijanje polovine sirine
@@ -143,6 +172,9 @@ int currentItem = 0;
 Spill spills[50];
 int spillCount = 0;
 
+GLFWcursor* cursor;
+
+
 int main()
 {
 
@@ -181,6 +213,8 @@ int main()
 	//vezivanje callbackova
 	glfwSetKeyCallback(window, key_callback);
 
+	cursor = loadImageToCursor("spatula.png");
+	glfwSetCursor(window, cursor);
 
 
 	double mouseX, mouseY;

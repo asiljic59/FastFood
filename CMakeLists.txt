@@ -57,6 +57,7 @@ file(COPY
     ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/cheese.png 
     ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/greetings.png  
     ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/tomato.png 	
+    ${CMAKE_SOURCE_DIR}/FastFood_SV_50_2022/spatula.png
     DESTINATION ${CMAKE_BINARY_DIR}
 )
 
