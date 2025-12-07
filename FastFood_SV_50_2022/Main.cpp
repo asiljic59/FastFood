@@ -4,6 +4,9 @@
 
 #include "stb/stb_image.h"
 
+#include <chrono>
+#include <thread>
+
 
 #include "shaderClass.h"
 #include "VBO.h"
@@ -209,6 +212,7 @@ int main()
 	}
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);
 
 	//vezivanje callbackova
 	glfwSetKeyCallback(window, key_callback);
@@ -416,8 +420,14 @@ int main()
 	glfwSwapBuffers(window);
 
 
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	const double TARGET_FPS = 75.0;
+	const double TARGET_FRAME_TIME = 1.0 / TARGET_FPS;
+
+	auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
 
 	// Main while loop
@@ -775,6 +785,16 @@ int main()
 			}
 		}
 
+		// --- FRAME LIMITER 75 FPS ---
+		auto now = std::chrono::high_resolution_clock::now();
+		double elapsed = std::chrono::duration<double>(now - lastFrameTime).count();
+
+		if (elapsed < TARGET_FRAME_TIME) {
+			double sleepTime = TARGET_FRAME_TIME - elapsed;
+			std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+		}
+
+		lastFrameTime = std::chrono::high_resolution_clock::now();
 
 
 		glfwSwapBuffers(window);
