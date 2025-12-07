@@ -1,0 +1,4 @@
+﻿  Main.cpp
+C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Main.cpp(436,13): warning C4101: 'texture': unreferenced local variable
+C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Main.cpp(437,10): warning C4101: 'mesh': unreferenced local variable
+  FastFood_SV_50_2022.vcxproj -> C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\x64\Debug\FastFood_SV_50_2022.exe
