@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorMesh.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="BurgerPart.h" />
     <ClInclude Include="callbacks.h" />
+    <ClInclude Include="cameraClass.h" />
     <ClInclude Include="ColorMesh.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="shaderClass.h" />

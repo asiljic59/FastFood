@@ -2,13 +2,18 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "shaderClass.h"
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <vector>
 class Mesh {
 public:
     VAO vao;
     VBO vbo;
     unsigned int vertexCount;
-    float verticesCopy[8];
+
+    std::vector<glm::vec3> positions;
+
 
 
     Mesh();

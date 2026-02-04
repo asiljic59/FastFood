@@ -57,6 +57,9 @@
     <ClCompile Include="ColorMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -89,6 +92,9 @@
     <ClInclude Include="BurgerPart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cameraClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -111,15 +117,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="patty.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="smederevac.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="start_button.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="name.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
@@ -164,6 +161,15 @@
     </Image>
     <Image Include="tomato.png">
       <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="D:\Downloads\patty.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="D:\Downloads\smederevac.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="D:\Downloads\start_button.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
 </Project>
