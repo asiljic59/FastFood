@@ -115,6 +115,12 @@
     <None Include="patty.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="light.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="light.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="name.png">

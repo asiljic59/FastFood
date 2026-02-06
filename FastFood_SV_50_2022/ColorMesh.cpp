@@ -1,33 +1,29 @@
-﻿#include "ColorMesh.h"
+﻿// ColorMesh3D.cpp
+#include "ColorMesh.h"
 
-ColorMesh::ColorMesh(float* vertices, size_t vertexSize)
-    : vbo(vertices, vertexSize)
+/*
+
+ColorMesh::ColorMesh(float* vertices, size_t vertexSize, GLuint* indices, size_t indexSize)
+    : vbo(vertices, vertexSize), ebo(indices, indexSize)
 {
     vao.Bind();
 
-    /// Format of vertex array:
-    /// X,Y,R,G,B,A  → 6 floats
-    unsigned int stride = 6 * sizeof(float);
+    // Format: X, Y, Z (3 floats for position)
+    unsigned int stride = 3 * sizeof(float);
 
-    // Position attribute
-    vao.LinkAttrib(vbo, 0, 2, GL_FLOAT, stride, (void*)0);
+    // Position attribute (location = 0)
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*)0);
 
-    // Color attribute
-    vao.LinkAttrib(vbo, 1, 4, GL_FLOAT, stride, (void*)(2 * sizeof(float)));
-
-    vertexCount = vertexSize / (6 * sizeof(float));
+    indexCount = indexSize / sizeof(GLuint);
 
     vao.Unbind();
     vbo.Unbind();
+    ebo.Unbind();
 }
 
-void ColorMesh::Draw(Shader& shader, float x, float y, float scaleX, float scaleY)
+void ColorMesh::Draw()
 {
-    shader.Activate();
-
-    glUniform2f(glGetUniformLocation(shader.ID, "uPos"), x, y);
-    glUniform2f(glGetUniformLocation(shader.ID, "uScale"), scaleX, scaleY);
-
     vao.Bind();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
+*/

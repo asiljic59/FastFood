@@ -1,119 +1,150 @@
-﻿#include<iostream>
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
-
-#include "stb/stb_image.h"
-
-#include <chrono>
-#include <thread>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-
-#include "shaderClass.h"
-#include "VBO.h"
-#include "EBO.h"
-#include "VAO.h"
-#include "callbacks.h"
-#include "Texture.h"
+﻿//------- Ignore this ----------
+#include<filesystem>
+namespace fs = std::filesystem;
+//------------------------------
 #include "Mesh.h"
-#include "ColorMesh.h"
-#include "cameraClass.h"
 
 
-const int ORDER_COUNT = 10;
 
-//za dugme na pocetku
-struct Button {
-	Mesh mesh;
-	Texture texture;
-	float x, y;     // center position
-	float w, h;     // width and height
-	bool clicked = false;
-};
-/// <summary>
-/// Stavke koje se stavljaju na burger
-/// texture -> tekstura obuhvacena stavkom
-/// mesh -> VAO + VBO
-/// x -> koordinata koja se pamti
-/// y -> koordinata koja se pamti
-/// cooked -> sluzi samo za patty
-/// </summary>
-struct BurgerPart {
-	Texture* texture;
-	Mesh* mesh;
-	float x;
-	float y;
-	bool cooked;
-};
-//za ketchup i senf
-struct Spill {
-	Texture* texture;
-	float x;
-	float y;
-};
-//provera da li je cursor na dugmetu
+const unsigned int width = 800;
+const unsigned int height = 800;
 
-bool IsInsideButton(Button b, float mx, float my)
+
+Vertex vertices[] =
 {
-	return mx > (b.x - b.w) &&
-		mx < (b.x + b.w) &&
-		my >(b.y - b.h) &&
-		my < (b.y + b.h);
-}
-//da li je burger na sporetu??
-bool PattyOverStove()
+	// ===== Front (+Z) =====
+	{ {-0.5f, 0.0f,  0.5f}, {0.0f,0.0f, 1.0f}, {0.8f,0.8f,0.8f}, {0.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.0f,  0.5f}, {0.0f,0.0f, 1.0f}, {0.8f,0.8f,0.8f}, {1.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.8f,  0.5f}, {0.0f,0.0f, 1.0f}, {0.8f,0.8f,0.8f}, {1.0f,1.0f,0.0f} },
+	{ {-0.5f, 0.8f,  0.5f}, {0.0f,0.0f, 1.0f}, {0.8f,0.8f,0.8f}, {0.0f,1.0f,0.0f} },
+
+	// ===== Back (-Z) =====
+	{ {-0.5f, 0.0f, -0.5f}, {0.0f,0.0f,-1.0f}, {0.8f,0.8f,0.8f}, {1.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.0f, -0.5f}, {0.0f,0.0f,-1.0f}, {0.8f,0.8f,0.8f}, {0.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.8f, -0.5f}, {0.0f,0.0f,-1.0f}, {0.8f,0.8f,0.8f}, {0.0f,1.0f,0.0f} },
+	{ {-0.5f, 0.8f, -0.5f}, {0.0f,0.0f,-1.0f}, {0.8f,0.8f,0.8f}, {1.0f,1.0f,0.0f} },
+
+	// ===== Left (-X) =====
+	{ {-0.5f, 0.0f, -0.5f}, {-1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,0.0f,0.0f} },
+	{ {-0.5f, 0.0f,  0.5f}, {-1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,0.0f,0.0f} },
+	{ {-0.5f, 0.8f,  0.5f}, {-1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,1.0f,0.0f} },
+	{ {-0.5f, 0.8f, -0.5f}, {-1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,1.0f,0.0f} },
+
+	// ===== Right (+X) =====
+	{ { 0.5f, 0.0f, -0.5f}, {1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.0f,  0.5f}, {1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.8f,  0.5f}, {1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,1.0f,0.0f} },
+	{ { 0.5f, 0.8f, -0.5f}, {1.0f,0.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,1.0f,0.0f} },
+
+	// ===== Bottom (-Y) =====
+	{ {-0.5f, 0.0f, -0.5f}, {0.0f,-1.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.0f, -0.5f}, {0.0f,-1.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.0f,  0.5f}, {0.0f,-1.0f,0.0f}, {0.8f,0.8f,0.8f}, {1.0f,1.0f,0.0f} },
+	{ {-0.5f, 0.0f,  0.5f}, {0.0f,-1.0f,0.0f}, {0.8f,0.8f,0.8f}, {0.0f,1.0f,0.0f} },
+
+	// ===== Top (+Y) =====
+	{ {-0.5f, 0.8f, -0.5f}, {0.0f,1.0f,0.0f}, {0.9f,0.9f,0.9f}, {0.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.8f, -0.5f}, {0.0f,1.0f,0.0f}, {0.9f,0.9f,0.9f}, {1.0f,0.0f,0.0f} },
+	{ { 0.5f, 0.8f,  0.5f}, {0.0f,1.0f,0.0f}, {0.9f,0.9f,0.9f}, {1.0f,1.0f,0.0f} },
+	{ {-0.5f, 0.8f,  0.5f}, {0.0f,1.0f,0.0f}, {0.9f,0.9f,0.9f}, {0.0f,1.0f,0.0f} }
+};
+
+GLuint indices[] =
 {
-	float stoveMinX = -1.0f;
-	float stoveMaxX = 0.0f;
-	float stoveMinY = -1.0f;
-	float stoveMaxY = 0.0f;
+	 0,  1,  2,   0,  2,  3,   // Front
+	 4,  5,  6,   4,  6,  7,   // Back
+	 8,  9, 10,   8, 10, 11,   // Left
+	12, 13, 14,  12, 14, 15,   // Right
+	16, 17, 18,  16, 18, 19,   // Bottom
+	20, 21, 22,  20, 22, 23    // Top
+};
 
-	float pattyWidthHalf = 0.1f; // 0.2 total width
-	float pattyHeightHalf = 0.1f; // 0.2 total height
 
-	//uzimamo koordinate patty tako sto x,y umanjimo/povercamo sa poloviom duzine/visine i dobijemo granice
-	float pattyMinX = uX - pattyWidthHalf;
-	float pattyMaxX = uX + pattyWidthHalf;
-	float pattyMinY = uY - pattyHeightHalf;
-	float pattyMaxY = uY + pattyHeightHalf;
 
-	bool overlapX = !(pattyMaxX < stoveMinX || pattyMinX > stoveMaxX);
-	bool overlapY = !(pattyMaxY < stoveMinY || pattyMinY > stoveMaxY);
+Vertex lightVertices[] =
+{ //     COORDINATES     //
+	Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
+	Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
+	Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
+	Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
+	Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
+	Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
+	Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
+	Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
+};
 
-	return overlapX && overlapY;
-}
-//loadovanje curosra
-GLFWcursor* loadImageToCursor(const char* filePath) {
-	int TextureWidth;
-	int TextureHeight;
-	int TextureChannels;
 
-	unsigned char* ImageData = stbi_load(filePath, &TextureWidth, &TextureHeight, &TextureChannels, 0);
+GLuint lightIndices[] =
+{
+	0, 1, 2,
+	0, 2, 3,
+	0, 4, 7,
+	0, 7, 3,
+	3, 7, 6,
+	3, 6, 2,
+	2, 6, 5,
+	2, 5, 1,
+	1, 5, 4,
+	1, 4, 0,
+	4, 5, 6,
+	4, 6, 7
+};
 
-	if (ImageData != NULL)
-	{
-		GLFWimage image;
-		image.width = TextureWidth;
-		image.height = TextureHeight;
-		image.pixels = ImageData;
 
-		// Tacka na površini slike kursora koja se ponaša kao hitboks
-		int hotspotX = TextureWidth / 5;
-		int hotspotY = TextureHeight / 6;
+void CreatePljeskavica(
+	float radius,
+	float height,
+	int segments,
+	std::vector<Vertex>& vertices,
+	std::vector<GLuint>& indices
+) {
+	float halfH = height * 0.5f;
 
-		GLFWcursor* cursor = glfwCreateCursor(&image, hotspotX, hotspotY);
-		stbi_image_free(ImageData);
-		return cursor;
+	// Center vertices
+	vertices.push_back({ {0,  halfH, 0}, {0,1,0}, {0.6f,0.3f,0.2f}, {0,0,0} }); // top center
+	vertices.push_back({ {0, -halfH, 0}, {0,-1,0}, {0.6f,0.3f,0.2f}, {0,0,0} }); // bottom center
+
+	int topCenter = 0;
+	int bottomCenter = 1;
+
+	// Circle vertices
+	for (int i = 0; i <= segments; i++) {
+		float angle = 2.0f * glm::pi<float>() * i / segments;
+		float x = radius * cos(angle);
+		float z = radius * sin(angle);
+
+		vertices.push_back({ {x,  halfH, z}, {0,1,0}, {0.6f,0.3f,0.2f}, {0,0,0} });
+		vertices.push_back({ {x, -halfH, z}, {0,-1,0}, {0.6f,0.3f,0.2f}, {0,0,0} });
 	}
-	else {
-		std::cout << "Kursor nije ucitan! Putanja kursora: " << filePath << std::endl;
-		stbi_image_free(ImageData);
 
+	// Indices
+	for (int i = 0; i < segments; i++) {
+		int t1 = 2 + i * 2;
+		int b1 = t1 + 1;
+		int t2 = t1 + 2;
+		int b2 = b1 + 2;
+
+		// Top
+		indices.push_back(topCenter);
+		indices.push_back(t1);
+		indices.push_back(t2);
+
+		// Bottom
+		indices.push_back(bottomCenter);
+		indices.push_back(b2);
+		indices.push_back(b1);
+
+		// Side
+		indices.push_back(t1);
+		indices.push_back(b1);
+		indices.push_back(b2);
+
+		indices.push_back(t1);
+		indices.push_back(b2);
+		indices.push_back(t2);
 	}
-}
 
+}
 
 //Pomeraj uX, uY za aktivnu teksturu
 float uX = 0.0f;
@@ -131,30 +162,10 @@ bool pattyCooked = false;
 bool spacePressed = false;
 bool spaceWasDown = false;
 
-//delovi burgera
-const int MAX_PARTS = 10;
-
-//vec postavljeni delovi burgera koji ima maksimalno koliko i delova
-BurgerPart placed[MAX_PARTS];
-int placedCount = 0;
-int currentItem = 0;
-
-//za ketchup i senf imamo i spill gde se pamti i iscrtava svaki put kad ne pritisnemo space iznad burgera
-Spill spills[50];
-int spillCount = 0;
-
-GLFWcursor* cursor;
-
-
 int main()
 {
 	// Initialize GLFW
-	if (!glfwInit()) {
-		std::cout << "GLFW Biblioteka se nije ucitala! :(\n";
-		return 1;
-	};
-
-
+	glfwInit();
 
 	// Tell GLFW what version of OpenGL we are using 
 	// In this case we are using OpenGL 3.3
@@ -164,14 +175,8 @@ int main()
 	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Get the primary monitor
-	GLFWmonitor* primary = glfwGetPrimaryMonitor();
-
-	// Get monitor video mode (resolution + refresh rate)
-	const GLFWvidmode* mode = glfwGetVideoMode(primary);
-
-	// Create FULLSCREEN window
-	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "YoutubeOpenGL", primary, NULL);
+	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
+	GLFWwindow* window = glfwCreateWindow(width, height, "YoutubeOpenGL", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -181,329 +186,106 @@ int main()
 	}
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0);
 
-	//vezivanje callbackova
-	glfwSetKeyCallback(window, key_callback);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-	cursor = loadImageToCursor("spatula.png");
-	glfwSetCursor(window, cursor);
-
-	Shader shaderProgram = Shader("default.vert","default.frag");
-
-    // ===== GORNJA PLOČA ŠPORETA (samo top face) =====
-    float stoveTopVertices[] = {
-        // X,     Y,     Z,      R,    G,    B,     U,    V
-        // Top face - glavna površina za kuvanje
-        -1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-         1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-        -1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-        -1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f
-    };
-
-    // ===== BOČNE STRANE ŠPORETA (sve osim top face) =====
-    float stoveSidesVertices[] = {
-        // X,     Y,     Z,      R,    G,    B,     U,    V
-
-        // Front face
-        -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-         1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-         1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-        -1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-        -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-
-        // Back face
-        -1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-         1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-        -1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-        -1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-
-        // Left face
-        -1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-        -1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-        -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-        -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-        -1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-        -1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-
-        // Right face
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-         1.0f,  0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-         1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-         1.0f,  0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-
-         // Bottom face
-         -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-          1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-          1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-          1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-         -1.0f, -0.1f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-         -1.0f, -0.1f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f
-    };
-
-    // ===== SVE 4 NOGE (male kocke na uglovima) =====
-    float allLegsVertices[] = {
-        // X,     Y,     Z,      R,    G,    B,     U,    V
-
-        // ===== NOGA 1: Levo-napred (-0.9, -0.5, -0.4) =====
-        // Front face
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Back face
-        -0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Left face
-        -0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        // Right face
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Bottom face
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Top face
-        -0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-
-        // ===== NOGA 2: Desno-napred (0.9, -0.5, -0.4) =====
-        // Front face
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Back face
-        0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Left face
-        0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        // Right face
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Bottom face
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.5f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Top face
-        0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.1f, -0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.1f, -0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-
-        // ===== NOGA 3: Levo-pozadi (-0.9, -0.5, 0.4) =====
-        // Front face
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Back face
-        -0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Left face
-        -0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        // Right face
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Bottom face
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Top face
-        -0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        -0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        -0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        -0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-
-        // ===== NOGA 4: Desno-pozadi (0.9, -0.5, 0.4) =====
-        // Front face
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Back face
-        0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        // Left face
-        0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        // Right face
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Bottom face
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.5f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.5f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        // Top face
-        0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f,
-        0.95f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  1.0f, 1.0f,
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.95f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  1.0f, 0.0f,
-        0.85f, -0.1f, 0.45f,  0.5f, 0.5f, 0.5f,  0.0f, 0.0f,
-        0.85f, -0.1f, 0.35f,  0.5f, 0.5f, 0.5f,  0.0f, 1.0f
-    };
-    Texture stoveTopTex("sporet_vrh.png", GL_TEXTURE0);
-    Texture stoveSideTex("sporet_bocna.png", GL_TEXTURE1);
-    Texture legTex("metal.png", GL_TEXTURE2);
-
-
-    Mesh stoveTopMesh(stoveTopVertices, sizeof(stoveTopVertices));
-    Mesh stoveSidesMesh(stoveSidesVertices, sizeof(stoveSidesVertices));
-    Mesh legsAll(allLegsVertices, sizeof(allLegsVertices));
-
-    
-    glEnable(GL_DEPTH_TEST);
+	//Load GLAD so it configures OpenGL
+	gladLoadGL();
+	// Specify the viewport of OpenGL in the Window
+	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
+	glViewport(0, 0, width, height);
 
 
 
-	Camera camera((float) mode->width,(float) mode->height, glm::vec3(0.0f, 0.0f, 2.0f));
+	Texture textures[]{
+		Texture("metal.png","diffuse",0,GL_RGBA,GL_UNSIGNED_BYTE),
+		Texture("spec.png","specular",1,GL_RED,GL_UNSIGNED_BYTE)
+	};
 
-	// Add this debug check
-	std::cout << "Camera position: " << camera.Position.x << ", "
-		<< camera.Position.y << ", " << camera.Position.z << std::endl;
+	// Generates Shader object using shaders default.vert and default.frag
+	Shader shaderProgram("default.vert", "default.frag");
+	std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+	std::vector <GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));
+	std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+	 
+	Mesh stove(verts, inds, tex);
 
-	int frameCount = 0;
+	Shader lightShader("light.vert", "light.frag");
+	std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+	std::vector<GLuint> lightInd(
+		lightIndices,
+		lightIndices + sizeof(lightIndices) / sizeof(GLuint)
+	);
+	std::vector<Texture> noTextures;
+	Mesh light(lightVerts, lightInd, noTextures);
 
-	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+	std::vector<Vertex> burgerVerts;
+	std::vector<GLuint> burgerInds;
+	Texture pljeskavicaTex[] = {
+		Texture("meat_diffuse.png", "diffuse", 0, GL_RGB, GL_UNSIGNED_BYTE),
+		Texture("meat_spec.png",    "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+	};
+
+	std::vector<Texture> meatTex(
+		pljeskavicaTex,
+		pljeskavicaTex + 2
+	);
+	CreatePljeskavica(0.5f, 0.15f, 32, burgerVerts, burgerInds);
+	Mesh burger(burgerVerts, burgerInds, meatTex);
+
+
+	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec3 lightPos = glm::vec3(0.7f, 0.7f, 0.5f);
+	glm::mat4 lightModel = glm::mat4(1.0f);
+	lightModel = glm::translate(lightModel, lightPos);
+
+	glm::vec3 stovePos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::mat4 stoveModel = glm::mat4(1.0f);
+	stoveModel = glm::translate(stoveModel, stovePos);
+
+
+	lightShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	shaderProgram.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(stoveModel));
+	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+	// Enables the Depth Buffer
+	glEnable(GL_DEPTH_TEST);
+
+	// Creates camera object
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
+	// Main while loop
+	while (!glfwWindowShouldClose(window))
+	{
+		// Specify the color of the background
+		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shaderProgram.Activate();
-
+		// Handles camera inputs
 		camera.Inputs(window);
-		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
+		// Updates and exports the camera matrix to the Vertex Shader
+		camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-		// Check if shader is active
-		GLint currentProgram;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
-		if (frameCount == 0) {
-			std::cout << "Shader ID: " << shaderProgram.ID << ", Current: " << currentProgram << std::endl;
-		}
-		
+		stove.Draw(shaderProgram,camera);
+		light.Draw(lightShader, camera);
+		burger.Draw(shaderProgram, camera);
 
-        // Crtaj gornju ploču sa svojom teksturom
-        stoveTopTex.Bind();  // ← koristi stoveTopTex umesto smederevac
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "tex0"), 0);  // texture unit 0
-        stoveTopMesh.Draw();
-
-        // Crtaj bočne strane sa svojom teksturom
-        stoveSideTex.Bind();  // ← nova tekstura
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "tex0"), 1);  // texture unit 1
-        stoveSidesMesh.Draw();
-
-        // Crtaj noge sa svojom teksturom
-        legTex.Bind();  // ← nova tekstura
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "tex0"), 2);  // texture unit 2
-        legsAll.Draw();
-
-		// Check for OpenGL errors each frame
-		GLenum err = glGetError();
-		if (err != GL_NO_ERROR && frameCount < 5) {
-			std::cout << "OpenGL error in render loop: " << err << std::endl;
-		}
-
+		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
+		// Take care of all GLFW events
 		glfwPollEvents();
-
-		frameCount++;
-		if (frameCount == 1) {
-			std::cout << "First frame rendered" << std::endl;
-		}
 	}
 
 
 
+	// Delete all the objects we've created
+	shaderProgram.Delete();
+	lightShader.Delete();
+	// Delete window before ending the program
+	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;

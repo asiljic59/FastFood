@@ -1,39 +1,57 @@
 ﻿#include "Mesh.h"
-#include <cmath>
 
-Mesh::Mesh() {}
-Mesh::Mesh(float* vertices, size_t vertexSize)
-    : vbo(vertices, vertexSize)
+Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures)
 {
-    vao.Bind();
+	Mesh::vertices = vertices;
+	Mesh::indices = indices;
+	Mesh::textures = textures;
 
-    unsigned int stride = 8; // 3 pos + 3 color/normal + 2 UV
-    unsigned int strideBytes = stride * sizeof(float);
-
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, strideBytes, (void*)0);           // position
-    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, strideBytes, (void*)(3 * sizeof(float))); // normal/color
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, strideBytes, (void*)(6 * sizeof(float))); // UV
-
-    vertexCount = vertexSize / (stride * sizeof(float)); // broj vertiksa
+	VAO.Bind();
+	// Generates Vertex Buffer Object and links it to vertices
+	VBO VBO(vertices);
+	// Generates Element Buffer Object and links it to indices
+	EBO EBO(indices);
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+	VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+	// Unbind all to prevent accidentally modifying them
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
 }
 
-void Mesh::Draw()
+
+void Mesh::Draw(Shader& shader, Camera& camera)
 {
-    vao.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-}
+	// Bind shader to be able to access uniforms
+	shader.Activate();
+	VAO.Bind();
 
-void Mesh::DrawColored(Shader& shader, float x, float y, float scaleX, float scaleY, float* color)
-{
-    shader.Activate();
-    glUniform1i(glGetUniformLocation(shader.ID, "useSolidColor"), 1);
-    glUniform4f(glGetUniformLocation(shader.ID, "solidColor"),
-        color[0], color[1], color[2], color[3]);
-    glUniform2f(glGetUniformLocation(shader.ID, "uPos"), x, y);
-    glUniform2f(glGetUniformLocation(shader.ID, "uScale"), scaleX, scaleY);
+	// Keep track of how many of each type of textures we have
+	unsigned int numDiffuse = 0;
+	unsigned int numSpecular = 0;
 
-    vao.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount); // TRIANGLES, ne STRIP
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		std::string num;
+		std::string type = textures[i].type;
+		if (type == "diffuse")
+		{
+			num = std::to_string(numDiffuse++);
+		}
+		else if (type == "specular")
+		{
+			num = std::to_string(numSpecular++);
+		}
+		textures[i].texUnit(shader, (type + num).c_str(), i);
+		textures[i].Bind();
+	}
+	// Take care of the camera Matrix
+	glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+	camera.Matrix(shader, "camMatrix");
 
-    glUniform1i(glGetUniformLocation(shader.ID, "useSolidColor"), 0);
+	// Draw the actual mesh
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

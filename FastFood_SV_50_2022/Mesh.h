@@ -6,21 +6,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+
+#include "VAO.h"
+#include "EBO.h"
+#include "shaderClass.h"
+#include "cameraClass.h"
+#include "Texture.h"
 class Mesh {
 public:
-    VAO vao;
-    VBO vbo;
-    unsigned int vertexCount;
-
-    std::vector<glm::vec3> positions;
+    std::vector <Vertex> vertices;
+    std::vector <GLuint> indices;
+    std::vector <Texture> textures;
 
 
+    VAO VAO;
 
-    Mesh();
-    Mesh(float* vertices, size_t vertexSize);
+    Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures);
 
-    void Bind();
-    void Draw();
-    void DrawColored(Shader& shader, float x, float y, float scaleX, float scaleY, float* color);
-
+    void Draw(Shader& shader, Camera& camera);
 };
