@@ -1,33 +1,87 @@
-﻿#include "ColorMesh.h"
+﻿// ColorMesh3D.cpp
+#include "ColorMesh.h"
 
-ColorMesh::ColorMesh(float* vertices, size_t vertexSize)
-    : vbo(vertices, vertexSize)
+ColorMesh::ColorMesh(
+    std::vector<Vertex>& vertices,
+    std::vector<GLuint>& indices
+)
 {
-    vao.Bind();
+    indexCount = static_cast<GLuint>(indices.size());
 
-    /// Format of vertex array:
-    /// X,Y,R,G,B,A  → 6 floats
-    unsigned int stride = 6 * sizeof(float);
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-    // Position attribute
-    vao.LinkAttrib(vbo, 0, 2, GL_FLOAT, stride, (void*)0);
+    glBindVertexArray(vao);
 
-    // Color attribute
-    vao.LinkAttrib(vbo, 1, 4, GL_FLOAT, stride, (void*)(2 * sizeof(float)));
+    // VBO
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        vertices.size() * sizeof(Vertex),
+        vertices.data(),
+        GL_DYNAMIC_DRAW
+    );
 
-    vertexCount = vertexSize / (6 * sizeof(float));
+    // EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER,
+        indices.size() * sizeof(GLuint),
+        indices.data(),
+        GL_STATIC_DRAW
+    );
 
-    vao.Unbind();
-    vbo.Unbind();
+    GLsizei stride = sizeof(Vertex);
+
+    // position (location = 0)
+    glVertexAttribPointer(
+        0, 3, GL_FLOAT, GL_FALSE,
+        stride,
+        (void*)offsetof(Vertex, position)
+    );
+    glEnableVertexAttribArray(0);
+
+    // normal (location = 1)
+    glVertexAttribPointer(
+        1, 3, GL_FLOAT, GL_FALSE,
+        stride,
+        (void*)offsetof(Vertex, normal)
+    );
+    glEnableVertexAttribArray(1);
+
+    // color (location = 2)
+    glVertexAttribPointer(
+        2, 3, GL_FLOAT, GL_FALSE,
+        stride,
+        (void*)offsetof(Vertex, color)
+    );
+    glEnableVertexAttribArray(2);
+
+    // uv (location = 3)
+    glVertexAttribPointer(
+        3, 2, GL_FLOAT, GL_FALSE,
+        stride,
+        (void*)offsetof(Vertex, texUV)
+    );
+    glEnableVertexAttribArray(3);
+
+    glBindVertexArray(0);
+}
+void ColorMesh::UpdateVertices(std::vector<Vertex>& vertices)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(
+        GL_ARRAY_BUFFER,
+        0,
+        vertices.size() * sizeof(Vertex),
+        vertices.data()
+    );
 }
 
-void ColorMesh::Draw(Shader& shader, float x, float y, float scaleX, float scaleY)
+void ColorMesh::Draw()
 {
-    shader.Activate();
-
-    glUniform2f(glGetUniformLocation(shader.ID, "uPos"), x, y);
-    glUniform2f(glGetUniformLocation(shader.ID, "uScale"), scaleX, scaleY);
-
-    vao.Bind();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }

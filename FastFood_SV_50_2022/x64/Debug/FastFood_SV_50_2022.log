@@ -1,26 +1,7 @@
 ﻿  Main.cpp
-C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Main.cpp(532,13): warning C4101: 'texture': unreferenced local variable
-C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Main.cpp(533,10): warning C4101: 'mesh': unreferenced local variable
-C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Main.cpp(111,1): warning C4715: 'loadImageToCursor': not all control paths return a value
-glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
-glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
-glfw3.lib(platform.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(platform.obj)' or at ''; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(null_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(null_init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_module.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_module.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(null_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(null_monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(null_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(null_window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(null_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(null_joystick.obj)' or at ''; linking object as if no debug info
-  FastFood_SV_50_2022.vcxproj -> C:\Users\Aleksa's PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\x64\Debug\FastFood_SV_50_2022.exe
+D:\Program Files\Micrsoft\VisualStudio2022\VC\Tools\MSVC\14.43.34808\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(312,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(313,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(437,16): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(385,1): warning C4715: 'loadImageToCursor': not all control paths return a value
+  FastFood_SV_50_2022.vcxproj -> C:\Users\Aleksa's PC\Desktop\FastFood\x64\Debug\FastFood_SV_50_2022.exe

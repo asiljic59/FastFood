@@ -1,0 +1,11 @@
+Model Information:
+* title:	Krabby Patty Burger
+* source:	https://sketchfab.com/3d-models/krabby-patty-burger-05ab2896f8ad4601b5ae118cddaaeab3
+* author:	Bársh (https://sketchfab.com/borsh_and)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Krabby Patty Burger" (https://sketchfab.com/3d-models/krabby-patty-burger-05ab2896f8ad4601b5ae118cddaaeab3) by Bársh (https://sketchfab.com/borsh_and) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

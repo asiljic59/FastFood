@@ -5,13 +5,13 @@ VBO::VBO() {
 
 }
 // GENERISE SE NOVI BAFER I LINKUJE SE SA VEKTORIMA
-VBO::VBO(float* vertices, GLsizeiptr size)
+VBO::VBO(std::vector <Vertex>& vertices)
 {
 	this->size = size;  // <-- save size
 
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
 }
 
 // Binding

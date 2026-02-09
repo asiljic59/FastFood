@@ -1,11 +1,11 @@
 #include"EBO.h"
-
+#include "vector"
 // GENERISE SE NOVI BAFER I LINKUJE SE SA VEKTORIMA
-EBO::EBO(GLuint* indices, GLsizeiptr size)
+EBO::EBO(std::vector<GLuint>& indices)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), indices.data(), GL_STATIC_DRAW);
 }
 
 // Binding

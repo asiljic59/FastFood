@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cheese Slice :3
+* source:	https://sketchfab.com/3d-models/cheese-slice-3-e1414578f3b9474f99cf79e30b709a40
+* author:	Silvia_Rose (https://sketchfab.com/silvia_rose)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cheese Slice :3" (https://sketchfab.com/3d-models/cheese-slice-3-e1414578f3b9474f99cf79e30b709a40) by Silvia_Rose (https://sketchfab.com/silvia_rose) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

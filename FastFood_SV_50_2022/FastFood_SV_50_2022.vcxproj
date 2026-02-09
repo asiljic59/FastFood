@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Aleksa%27s PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Aleksa%27s PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Aleksa%27s PC\Desktop\FastFood\FastFood_SV_50_2022\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Aleksa%27s PC\Desktop\FastFood\FastFood_SV_50_2022\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Aleksa%27s PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Aleksa%27s PC\Desktop\VII semestar\Računarska Grafika\FastFood_SV_50_2022\FastFood_SV_50_2022\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Aleksa%27s PC\Desktop\FastFood\FastFood_SV_50_2022\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Aleksa%27s PC\Desktop\FastFood\FastFood_SV_50_2022\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -84,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,6 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,12 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ColorMesh.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="key_callback.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -153,8 +157,10 @@
   <ItemGroup>
     <ClInclude Include="BurgerPart.h" />
     <ClInclude Include="callbacks.h" />
+    <ClInclude Include="cameraClass.h" />
     <ClInclude Include="ColorMesh.h" />
     <ClInclude Include="EBO.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Mesh.h" />
@@ -167,8 +173,12 @@
     <None Include="color.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="light.frag" />
+    <None Include="light.vert" />
     <None Include="patty.frag" />
     <None Include="patty.vert" />
+    <None Include="ui.frag" />
+    <None Include="ui.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="bottom_bun.png" />

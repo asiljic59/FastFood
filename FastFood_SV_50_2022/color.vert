@@ -1,18 +1,12 @@
 #version 330 core
 
-layout(location = 0) in vec2 inPos;
-layout(location = 1) in vec4 inCol;
+layout (location = 0) in vec3 aPos;
+layout (location = 2) in vec3 aColor;
 
-out vec4 chCol;
-
-uniform vec2 uPos;
-uniform vec2 uScale;  // <--- add this
+out vec3 vColor;
 
 void main()
 {
-    vec2 scaled = inPos * uScale;   // scale around origin
-    vec2 moved  = scaled + uPos;    // then move
-
-    gl_Position = vec4(moved, 0.0, 1.0);
-    chCol = inCol;
+    gl_Position = vec4(aPos, 1.0); // already in NDC
+    vColor = aColor;
 }
