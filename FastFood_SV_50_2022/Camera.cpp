@@ -16,17 +16,22 @@ void Camera::Matrix(Shader& shader,
 
 }
 
-void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane ) {
+void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
+{
+	glm::mat4 view = glm::lookAt(
+		Position,
+		Position + Orientation,
+		Up
+	);
 
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
-
-	view = glm::lookAt(Position, Position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOVdeg), (float)(width / height),
-		nearPlane, farPlane);
+	glm::mat4 projection = glm::perspective(
+		glm::radians(FOVdeg),
+		(float)width / height,
+		nearPlane,
+		farPlane
+	);
 
 	cameraMatrix = projection * view;
-
 }
 
 void Camera::Inputs(GLFWwindow* window) {
@@ -96,4 +101,22 @@ void Camera::Inputs(GLFWwindow* window) {
 		// Makes sure the next time the camera looks around it doesn't jump
 		firstClick = true;
 	}
+}
+
+void Camera::SetTopDown(float height)
+{
+	Position = glm::vec3(0.0f, height, 0.0f);
+
+	// Look straight down
+	Orientation = glm::vec3(0.0f, -1.0f, 0.0f);
+
+	// Z axis becomes "up" when looking down
+	Up = glm::vec3(0.0f, 0.0f, -1.0f);
+}
+
+void Camera::LookAt(glm::vec3 target)
+{
+	Orientation = glm::normalize(target - Position);
+	// Reset Up vector to standard
+	Up = glm::vec3(0.0f, 1.0f, 0.0f);
 }

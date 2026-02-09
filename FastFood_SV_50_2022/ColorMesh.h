@@ -7,15 +7,22 @@
 #include "EBO.h"
 #include "shaderClass.h"
 
-class ColorMesh {
+class ColorMesh
+{
 public:
-    VAO vao;
-    VBO vbo;
-    EBO ebo;
-    unsigned int indexCount;
+    ColorMesh(std::vector<Vertex>& vertices,
+        std::vector<GLuint>& indices);
 
-    ColorMesh(float* vertices, size_t vertexSize, GLuint* indices, size_t indexSize);
+    void UpdateVertices(std::vector<Vertex>& vertices);
     void Draw();
+
+private:
+    GLuint vao = 0;
+    GLuint vbo = 0;
+    GLuint ebo = 0;
+
+    GLuint indexCount = 0;
 };
+
 
 #endif

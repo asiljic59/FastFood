@@ -1,0 +1,11 @@
+Model Information:
+* title:	Raw Burger Meatball - patty
+* source:	https://sketchfab.com/3d-models/raw-burger-meatball-patty-f06c05b2ed79480097a1ee0911f32344
+* author:	beratfg12 (https://sketchfab.com/beratfg12)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Raw Burger Meatball - patty" (https://sketchfab.com/3d-models/raw-burger-meatball-patty-f06c05b2ed79480097a1ee0911f32344) by beratfg12 (https://sketchfab.com/beratfg12) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

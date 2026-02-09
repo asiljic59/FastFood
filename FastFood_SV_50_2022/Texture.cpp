@@ -1,6 +1,6 @@
 #include"Texture.h"
 
-Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum format, GLenum pixelType)
+Texture::Texture(const char* image, const char* texType, GLuint slot)
 {
 	// Assigns the type of the texture ot the texture object
 	type = texType;
@@ -11,13 +11,6 @@ Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum for
 	stbi_set_flip_vertically_on_load(true);
 	// Reads the image from a file and stores it in bytes
 	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
-	if (!bytes) {
-		std::cout << "Failed to load texture: " << image << std::endl;
-		return;
-	}
-
-	std::cout << image << " width: " << widthImg << " height: " << heightImg << " channels: " << numColCh << std::endl;
-
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
@@ -38,28 +31,51 @@ Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum for
 	// float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
-	// Assigns the image to the OpenGL Texture object
-	GLenum realFormat;
-	if (numColCh == 1)      realFormat = GL_RED;
-	else if (numColCh == 3) realFormat = GL_RGB;
-	else if (numColCh == 4) realFormat = GL_RGBA;
-	else {
-		std::cout << "Unsupported channel count: " << numColCh << std::endl;
-		stbi_image_free(bytes);
-		return;
-	}
+	// Check what type of color channels the texture has and load it accordingly
+	if (numColCh == 4)
+		glTexImage2D
+		(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			widthImg,
+			heightImg,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	else if (numColCh == 3)
+		glTexImage2D
+		(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			widthImg,
+			heightImg,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	else if (numColCh == 1)
+		glTexImage2D
+		(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			widthImg,
+			heightImg,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			bytes
+		);
+	else
+		throw std::invalid_argument("Automatic Texture type recognition failed");
 
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		realFormat,
-		widthImg,
-		heightImg,
-		0,
-		realFormat,
-		GL_UNSIGNED_BYTE,
-		bytes
-	);	glGenerateMipmap(GL_TEXTURE_2D);
+	// Generates MipMaps
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// Deletes the image data as it is already in the OpenGL Texture object
 	stbi_image_free(bytes);

@@ -60,6 +60,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -95,6 +98,9 @@
     <ClInclude Include="cameraClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -119,6 +125,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="light.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ui.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ui.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
