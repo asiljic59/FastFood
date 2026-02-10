@@ -1,7 +1,7 @@
 ﻿  Main.cpp
 D:\Program Files\Micrsoft\VisualStudio2022\VC\Tools\MSVC\14.43.34808\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.
-C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(312,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(313,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(437,16): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(385,1): warning C4715: 'loadImageToCursor': not all control paths return a value
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(314,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(438,16): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Aleksa's PC\Desktop\FastFood\FastFood_SV_50_2022\Main.cpp(386,1): warning C4715: 'loadImageToCursor': not all control paths return a value
   FastFood_SV_50_2022.vcxproj -> C:\Users\Aleksa's PC\Desktop\FastFood\x64\Debug\FastFood_SV_50_2022.exe

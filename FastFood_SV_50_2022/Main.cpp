@@ -301,6 +301,7 @@ int spillCount = 0;
 
 bool mouseButtonPressed = false;
 bool orderStarted = false;
+bool orderEnded = false;
 void mousePressedCallback(GLFWwindow* window) {
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && !mouseButtonPressed)
 	{
@@ -697,7 +698,7 @@ int main()
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) uX -= speed;
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) uX += speed;
 
-		if (orderStarted || pattyCooked) {
+		if (!orderEnded && (orderStarted || pattyCooked)) {
 			camera.Inputs(window);
 		}
 		camera.updateMatrix(60.0f, 0.1f, 100.0f);
@@ -1065,6 +1066,7 @@ int main()
 
 			}
 			else {
+				orderEnded = true;
 				glEnable(GL_BLEND);
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				greetings.DrawUI(uiShader);
@@ -1075,7 +1077,6 @@ int main()
 		else {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 			glDisable(GL_CULL_FACE);
 			startButton.DrawUI(uiShader);
 			mousePressedCallback(window);
